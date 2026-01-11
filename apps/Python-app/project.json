@@ -1,5 +1,5 @@
 {
-  "name": "Python-app",
+  "name": "python-app",
   "projectType": "application",
   "targets": {
     "build": {
@@ -14,6 +14,19 @@
       "options": {
         "cwd": "apps/Python-app",
         "command": "python main.py"
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t python-app:latest -f apps/Python-app/Dockerfile ."
+      }
+    },
+    "docker-run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker run -d -p 8080:8080 python-app:latest"
       }
     }
   }

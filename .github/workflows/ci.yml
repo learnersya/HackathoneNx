@@ -1,4 +1,4 @@
-name: CI
+name: Nx Monorepo CI
 
 on:
   push:
@@ -6,57 +6,35 @@ on:
       - main
   pull_request:
 
-permissions:
-  actions: read
-  contents: read
-
 jobs:
-  main:
+  nx-ci:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      # Setup Node.js
-      - name: Setup Node
+      # Node for Nx
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 18
 
-      # Install Node dependencies
-      - name: Install Node dependencies
+      # .NET for dotnet apps
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # Docker
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install Nx dependencies
         run: npm ci
 
-      # Setup Java 17 (kept, but Java build is excluded)
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      # Install Maven (kept, but not used by Nx now)
-      - name: Install Maven
+      # Nx controls EVERYTHING
+      - name: Nx build Docker images
         run: |
-          sudo apt-get update
-          sudo apt-get install -y maven
-
-      # Verify Java & Maven (optional, can remove later)
-      - name: Verify Java & Maven
-        run: |
-          java -version
-          mvn -version
-          which mvn
-
-      # ✅ Nx build (JAVA APP EXCLUDED)
-      - name: Run Nx build (exclude java-app)
-        run: npx nx run-many -t build --parallel=3 --exclude=java-app
-
-      # ✅ Nx lint/test/typecheck (JAVA APP EXCLUDED)
-      - name: Run lint, test, typecheck (exclude java-app)
-        run: npx nx run-many -t lint test typecheck --exclude=java-app
-        if: always()
+          npx nx run python-app:docker-build
+          npx nx run dotnet-app:docker-build
