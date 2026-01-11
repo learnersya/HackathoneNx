@@ -2,10 +2,10 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY apps/Python-app/requirements.txt .
+COPY apps/python-app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY apps/Python-app .
+COPY apps/python-app .
 
 EXPOSE 8080
 

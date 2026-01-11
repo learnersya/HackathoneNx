@@ -5,14 +5,14 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/Python-app",
+        "cwd": "apps/python-app",
         "command": "python -m compileall ."
       }
     },
     "run": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/Python-app",
+        "cwd": "apps/python-app",
         "command": "python main.py"
       }
     },
@@ -20,7 +20,7 @@
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker build -t python-app:latest -f apps/Python-app/Dockerfile ."
+        "command": "docker build -t python-app:latest -f apps/python-app/Dockerfile ."
       }
     },
     "docker-run": {
